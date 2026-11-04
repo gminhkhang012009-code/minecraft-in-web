@@ -3,157 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Web 3D</title>
+    <title>Prism Launcher - Web Dashboard</title>
     <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --sidebar-color: #181825;
+            --card-color: #313244;
+            --accent-color: #89b4fa;
+            --text-color: #cdd6f4;
+            --text-muted: #a6adc8;
+            --green: #a6e3a1;
+        }
         body {
             margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
             overflow: hidden;
-            background-color: #87CEEB;
-            font-family: Arial, sans-serif;
         }
-        #instructions {
-            position: absolute;
-            top: 15px;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            pointer-events: none;
-            z-index: 10;
+        /* Sidebar */
+        sidebar {
+            width: 240px;
+            background-color: var(--sidebar-color);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #45475a;
         }
-        #crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 24px;
+        .logo-area {
+            padding: 20px;
+            font-size: 18px;
             font-weight: bold;
-            pointer-events: none;
-            z-index: 10;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .nav-links li {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-muted);
+        }
+        .nav-links li:hover, .nav-links li.active {
+            background-color: #45475a;
+            color: var(--text-color);
+            border-left: 4px solid var(--accent-color);
+        }
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #45475a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toolbar {
+            padding: 20px 30px;
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            background-color: var(--accent-color);
+            color: #11111b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-secondary {
+            background-color: var(--card-color);
+            color: var(--text-color);
+        }
+        /* Instances Grid */
+        .instances-container {
+            padding: 0 30px 30px 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .instance-card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #45475a;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .instance-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
+        }
+        .instance-header {
+            height: 100px;
+            background: linear-gradient(45deg, #11111b, #313244);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .instance-body {
+            padding: 15px;
+        }
+        .instance-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .instance-version {
+            font-size: 12px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
-    <div id="instructions">Click vào màn hình để chơi | Dùng phím W, A, S, D để di chuyển | Di chuyển chuột để nhìn xung quanh</div>
-    <div id="crosshair">+</div>
 
-    <!-- Nhúng thư viện Three.js từ CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <script>
-        let camera, scene, renderer;
-        let objects = [];
-        let isLocked = false;
+    <!-- Sidebar -->
+    <sidebar>
+        <div class="logo-area">
+            💎 Prism Web UI
+        </div>
+        <ul class="nav-links">
+            <li class="active">Instances (1)</li>
+            <li>Global Mods</li>
+            <li>Resource Packs</li>
+            <li>Settings</li>
+            <li>About</li>
+        </ul>
+    </sidebar>
 
-        let moveForward = false;
-        let moveBackward = false;
-        let moveLeft = false;
-        let moveRight = false;
-        let prevTime = performance.now();
-        let velocity = new THREE.Vector3();
-        let direction = new THREE.Vector3();
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h2>Quản lý phiên bản game</h2>
+            <div>Tài khoản: <b>Player_Offline</b></div>
+        </header>
 
-        init();
-        animate();
+        <div class="toolbar">
+            <button class="btn" onclick="alert('Tính năng thêm Instance')">+ Thêm Instance</button>
+            <button class="btn btn-secondary">Quản lý tài khoản</button>
+        </div>
 
-        function init() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB); // Màu bầu trời Minecraft
-            scene.fog = new THREE.FogExp2(0x87CEEB, 0.02);
+        <div class="instances-container">
+            <!-- Minecraft Instance Item -->
+            <div class="instance-card" onclick="alert('Đang khởi chạy Minecraft 1.20.4...')">
+                <div class="instance-header">🧱</div>
+                <div class="instance-body">
+                    <div class="instance-title">Vanilla 1.20.4</div>
+                    <div class="instance-version">Fabric Loader 0.15.0</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.y = 5;
-
-            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
-            light.position.set(0, 500, 0);
-            scene.add(light);
-
-            // Tạo mặt đất phẳng dạng khối (Voxel blocks)
-            const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-            const boxMat = new THREE.MeshLambertMaterial({ color: 0x55aa55 }); // Màu cỏ
-
-            for (let x = -12; x <= 12; x++) {
-                for (let z = -12; z <= 12; z++) {
-                    const mesh = new THREE.Mesh(boxGeo, boxMat);
-                    mesh.position.set(x, 0, z);
-                    scene.add(mesh);
-                    objects.push(mesh);
-                }
-            }
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-
-            // Khóa chuột khi click vào màn hình để xoay góc nhìn
-            document.body.addEventListener('click', () => {
-                document.body.requestPointerLock();
-            });
-
-            document.addEventListener('pointerlockchange', () => {
-                isLocked = (document.pointerLockElement === document.body);
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isLocked) return;
-                const movementX = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
-                const movementY = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
-
-                camera.rotation.y -= movementX * 0.002;
-                camera.rotation.x -= movementY * 0.002;
-                camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
-            });
-
-            // Bắt sự kiện bàn phím WASD
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'KeyW') moveForward = true;
-                if (e.code === 'KeyS') moveBackward = true;
-                if (e.code === 'KeyA') moveLeft = true;
-                if (e.code === 'KeyD') moveRight = true;
-            });
-
-            document.addEventListener('keyup', (e) => {
-                if (e.code === 'KeyW') moveForward = false;
-                if (e.code === 'KeyS') moveBackward = false;
-                if (e.code === 'KeyA') moveLeft = false;
-                if (e.code === 'KeyD') moveRight = false;
-            });
-
-            window.addEventListener('resize', onWindowResize);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const time = performance.now();
-            const delta = (time - prevTime) / 1000;
-
-            if (isLocked) {
-                velocity.x -= velocity.x * 10.0 * delta;
-                velocity.z -= velocity.z * 10.0 * delta;
-
-                direction.z = Number(moveForward) - Number(moveBackward);
-                direction.x = Number(moveRight) - Number(moveLeft);
-                direction.normalize();
-
-                if (moveForward || moveBackward) velocity.z -= direction.z * 30.0 * delta;
-                if (moveLeft || moveRight) velocity.x -= direction.x * 30.0 * delta;
-
-                camera.translateX(velocity.x * delta);
-                camera.translateZ(velocity.z * delta);
-            }
-
-            prevTime = time;
-            renderer.render(scene, camera);
-        }
-    </script>
 </body>
 </html>
